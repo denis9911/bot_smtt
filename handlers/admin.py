@@ -5,7 +5,7 @@ from bs4 import BeautifulSoup
 import requests
 from datetime import datetime as dt
 from loguru import logger
-from create_bot import bot, cursor, db, admins, Feedback
+from create_bot import bot, cursor, db, admins, Feedback, yandex_token
 import yadisk
 
 send_rss = True
@@ -216,7 +216,8 @@ def feedback(message):
 
 def izmenenia_yadisk():
     file_format = '.docx'
-    y = yadisk.YaDisk(token='y0_AgAAAAAGcqjVAAjdqgAAAADWgJzYLG5XsEgDScKHD9NcCWtRDnrP4a4')
+    print(yandex_token)
+    y = yadisk.YaDisk(token=yandex_token)
     a = y.public_listdir('https://disk.yandex.ru/d/g28ZNGmvkhGnUQ')
     path_izmenenia = r'\\192.168.0.5\pool1\user\Миллер К.М\tgbot'
     count = 0
