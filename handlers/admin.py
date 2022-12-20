@@ -216,7 +216,6 @@ def feedback(message):
 
 def izmenenia_yadisk():
     file_format = '.docx'
-    print(yandex_token)
     y = yadisk.YaDisk(token=yandex_token)
     a = y.public_listdir('https://disk.yandex.ru/d/g28ZNGmvkhGnUQ')
     path_izmenenia = r'\\192.168.0.5\pool1\user\Миллер К.М\tgbot'
