@@ -44,4 +44,3 @@ class Contacts(StatesGroup):
 
 
 bot.add_custom_filter(custom_filters.StateFilter(bot))
-bot.add_custom_filter(custom_filters.IsDigitFilter())
