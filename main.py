@@ -361,7 +361,7 @@ def message_reply(message):
 
         # Кнопка показывает реквизиты для оплаты обучения
         elif message.text == '💵 Реквизиты для оплаты обучения 💵':
-            bot.send_message(message.chat.id, text="http://www.satehm.ru/studentam/rekvizity-dlya-oplaty/:")
+            bot.send_message(message.chat.id, text="http://www.satehm.ru/studentam/rekvizity-dlya-oplaty/")
 
 
         # Кнопка показывает Контакты
