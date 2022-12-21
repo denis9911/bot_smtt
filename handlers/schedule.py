@@ -32,7 +32,7 @@ def full_list_changes(message):
         for row in tables.rows:
             for cell in row.cells:
                 word_from_doc.append(cell.text)
-    for word_index in range(4, len(word_from_doc), 4):
+    for word_index in range(0, len(word_from_doc), 4):
         word_final.append('\n'.join(word_from_doc[
                                     word_index:word_index + 4]) + f'\n{"-" * 30}\n')  # Объединяем первые 4 элемента списка в 1, в конце добавляем подчеркивание
     bot.send_message(message.chat.id, ''.join(word_final))
