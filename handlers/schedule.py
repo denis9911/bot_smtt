@@ -13,7 +13,8 @@ sheet_full = lw.active  # Выбрать активный лист
 def full_list_changes(message):
     path = r'\\192.168.0.5\pool1\user\Миллер К.М\tgbot'
     files = []
-    word = []
+    word_from_doc = []
+    word_final = []
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     markup.add(types.KeyboardButton('Вернуться в главное меню'))
     for folder in os.listdir(path):
@@ -30,10 +31,11 @@ def full_list_changes(message):
     for tables in doc_file.tables:
         for row in tables.rows:
             for cell in row.cells:
-                word.append(cell.text)
-    for row in range(4, len(word) + 5, 5):
-        word.insert(row, f'{"-" * 30}')
-    bot.send_message(message.chat.id, '\n'.join(word))
+                word_from_doc.append(cell.text)
+    for word_index in range(4, len(word_from_doc), 4):
+        word_final.append('\n'.join(word_from_doc[
+                                    word_index:word_index + 4]) + f'\n{"-" * 30}\n')  # Объединяем первые 4 элемента списка в 1, в конце добавляем подчеркивание
+    bot.send_message(message.chat.id, ''.join(word_final))
 
 
 @bot.message_handler(state=ScheduleStates.week_in_a_row)
@@ -223,7 +225,8 @@ def izmenenia(message):
             for rows in user_group_rows:
                 new_line_char = '\n'
                 bot.send_message(message.chat.id,
-                                 text=f'*Изменения в расписании на этот день недели:\n{new_line_char.join(rows)}*', parse_mode='Markdown')
+                                 text=f'*Изменения в расписании на этот день недели:\n{new_line_char.join(rows)}*',
+                                 parse_mode='Markdown')
         else:
             return bot.send_message(message.chat.id, text='*Изменений в расписании для выбранного дня недели нет*',
                                     parse_mode='Markdown')
