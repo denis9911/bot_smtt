@@ -243,5 +243,5 @@ def register_handlers_admin():
 # Каждые 10 минут срабатывает проверка на
 scheduler = BackgroundScheduler()
 scheduler.add_job(rss_sending, "interval", minutes=10)
-scheduler.add_job(izmenenia_yadisk, "interval", minutes=30)
+scheduler.add_job(izmenenia_yadisk, "interval", minutes=60)
 scheduler.start()
