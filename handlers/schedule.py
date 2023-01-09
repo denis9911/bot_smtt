@@ -172,7 +172,7 @@ def raspisanie(message):
                         count_chislitel += 1  # Какая по счёту пара
                     else:
                         list_lents.append(
-                            f'{count_chislitel} пара - ❌❌❌\n{"-" * 60}')  # Если None
+                            f'{count_chislitel} пара - ❌❌❌\n{"-" * 30}')  # Если None
                         count_chislitel += 1
             # Если нечетная, то перебираем значения, если первое NoneType, то печатаем первое из четного листа, если и там и там нет значения, то ❌❌❌
             if data['parity_week'] == 'знаменатель':
