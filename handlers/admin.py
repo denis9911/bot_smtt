@@ -93,7 +93,8 @@ def sending_message_to_user(message):
         bot.copy_message(message_id=message.id, from_chat_id=message.chat.id, chat_id=data['sending_user_id'])
     markup = types.ReplyKeyboardMarkup()
     markup.add(types.KeyboardButton('Вернуться в главное меню'))
-    bot.send_message(message.chat.id, text=f'Сообщение "{message.text}" отправлено пользователю', reply_markup=markup)
+    for admin in admins:
+        bot.send_message(admin, text=f'Сообщение "{message.text}" отправлено пользователю', reply_markup=markup)
     bot.delete_state(message.from_user.id, message.chat.id)
 
 # @bot.message_handler(commands=['send_feedback'])
