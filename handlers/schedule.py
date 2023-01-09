@@ -5,8 +5,9 @@ from openpyxl import load_workbook
 import os
 import docx
 
-lw = load_workbook(filename=r'\\192.168.0.5\pool1\user\Миллер К.М\tgbot\raspisanie.xlsx')
-sheet_full = lw.active  # Выбрать активный лист
+if os.path.exists(r'\\192.168.0.5\pool1\user\Миллер К.М\tgbot\raspisanie.xlsx'):
+    lw = load_workbook(filename=r'\\192.168.0.5\pool1\user\Миллер К.М\tgbot\raspisanie.xlsx')
+    sheet_full = lw.active  # Выбрать активный лист
 
 
 @bot.message_handler(state=ScheduleStates.full_list_changes)

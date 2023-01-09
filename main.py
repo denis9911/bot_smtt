@@ -133,14 +133,17 @@ def message_reply(message):
             markup.add(back)
             bot.send_message(message.chat.id, text="Выберите один из пунктов меню:", reply_markup=markup)
         elif message.text == "Расписание" + '\n' + "очное":
-            markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
-            btn1 = types.KeyboardButton('Текущая неделя')
-            btn2 = types.KeyboardButton('Следующая неделя')
-            cancel = types.KeyboardButton('Вернуться в главное меню')
-            markup.add(btn1, btn2, cancel)
-            bot.set_state(user_id=message.from_user.id, state=ScheduleStates.week_in_a_row, chat_id=message.chat.id)
-            bot.send_message(message.chat.id, text='Расписание для текущей или следующей недели?',
-                             reply_markup=markup)
+            if os.path.exists(r'\\192.168.0.5\pool1\user\Миллер К.М\tgbot\raspisanie.xlsx'):
+                markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
+                btn1 = types.KeyboardButton('Текущая неделя')
+                btn2 = types.KeyboardButton('Следующая неделя')
+                cancel = types.KeyboardButton('Вернуться в главное меню')
+                markup.add(btn1, btn2, cancel)
+                bot.set_state(user_id=message.from_user.id, state=ScheduleStates.week_in_a_row, chat_id=message.chat.id)
+                bot.send_message(message.chat.id, text='Расписание для текущей или следующей недели?',
+                                 reply_markup=markup)
+            else:
+                bot.send_message(message.chat.id, text='Расписание отсутствует')
         elif message.text == 'Полный список изменений':
             path = r'\\192.168.0.5\pool1\user\Миллер К.М\tgbot'  # Отправляем папку
             file_buttons = []
