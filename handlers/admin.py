@@ -61,7 +61,10 @@ def sending_message(message):
     else:
         cursor.execute("SELECT user_id FROM users")
         for users in cursor:
-            bot.copy_message(message_id=message.id, from_chat_id=message.chat.id, *users)
+            try:
+                bot.copy_message(message_id=message.id, from_chat_id=message.chat.id, *users)
+            except:
+                logger.info(f'Пользователь {users} заблокировал ботяру')
         logger.info(f'Пользователь {message.chat.id} отправил подписчикам {message.text}')
 
 
@@ -76,6 +79,7 @@ def reg_send_message_to_user(message):
     else:
         bot.send_message(message.chat.id, "Это команда для администратора, Вы - им не являетесь 👀")
 
+
 @bot.message_handler(state=Feedback.send_message_to_user)
 def send_message_to_user(message):
     if message.text == "Вернуться в главное меню":
@@ -87,6 +91,7 @@ def send_message_to_user(message):
             data['sending_user_id'] = message.text
         bot.set_state(message.from_user.id, Feedback.sending_message_to_user, message.chat.id)
 
+
 @bot.message_handler(state=Feedback.sending_message_to_user, content_types=types.util.content_type_media)
 def sending_message_to_user(message):
     with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
@@ -96,6 +101,7 @@ def sending_message_to_user(message):
     for admin in admins:
         bot.send_message(admin, text=f'Сообщение "{message.text}" отправлено пользователю', reply_markup=markup)
     bot.delete_state(message.from_user.id, message.chat.id)
+
 
 # @bot.message_handler(commands=['send_feedback'])
 def send_feedback(message):
