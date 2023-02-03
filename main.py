@@ -159,8 +159,6 @@ def message_reply(message):
             bot.set_state(message.from_user.id, ScheduleStates.full_list_changes, message.chat.id)
 
         elif message.text == "Расписание" + '\n' + "экзаменов":
-            path = r'\\192.168.0.5\pool1\user\Миллер К.М\tgbot\exams'
-            buttons = []
             markup = types.ReplyKeyboardMarkup(row_width=2)
             btn1 = types.KeyboardButton('1 курс')
             btn2 = types.KeyboardButton('2 курс')
