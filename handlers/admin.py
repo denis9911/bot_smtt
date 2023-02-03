@@ -59,12 +59,14 @@ def sending_message(message):
     if message.text == "Вернуться в главное меню":
         bot.send_message(message.chat.id, 'Задание отменено, нажмите кнопку ещё раз')
     else:
+        bot.send_message(message.cat.id, 'Начал отправку сообщения')
         cursor.execute("SELECT user_id FROM users")
         for users in cursor:
             try:
                 bot.copy_message(message_id=message.id, from_chat_id=message.chat.id, *users)
             except:
                 logger.info(f'Пользователь {users} заблокировал ботяру')
+        bot.send_message(message.chat.id, 'Сообщение доставлено всем пользователям')
         logger.info(f'Пользователь {message.chat.id} отправил подписчикам {message.text}')
 
 
@@ -175,7 +177,7 @@ def rss_sending():
         site_content = BeautifulSoup(url.content, 'xml')
         site_items = site_content.find_all('item')
         try:
-            for item in site_items[:2]:
+            for item in site_items[:3]:
                 site_date = item.pubDate.text[:-5]
                 news_name = item.title.text
                 news_link = item.link.text
@@ -183,12 +185,14 @@ def rss_sending():
                 news = [news_name, news_date, news_link]
                 cursor.execute("INSERT INTO site_news VALUES(?, ?, ?);", news)
                 db.commit()
+                bot.send_message(765860654, f'Вышла новая новость {news_name}, начинаю отправку пользователям')
                 cursor.execute("SELECT user_id FROM users")
                 for user_id in cursor:
                     try:
                         bot.send_message(*user_id, text=f'{news_name} \n\n{news_link}')
                     except:
                         logger.info(f'Пользователь {user_id} заблокировал ботяру')
+                bot.send_message(765860654, f'Новость {news_name} доставлена всем пользователям')
                 logger.info(f'Вышла новая новость, отправляю всем подписчикам: {news_name} - {news_link}')
         except sqlite3.IntegrityError:
             pass
