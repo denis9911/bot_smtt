@@ -185,14 +185,14 @@ def rss_sending():
                 news = [news_name, news_date, news_link]
                 cursor.execute("INSERT INTO site_news VALUES(?, ?, ?);", news)
                 db.commit()
-                bot.send_message(765860654, f'Вышла новая новость {news_name}, начинаю отправку пользователям')
+                bot.send_message(765860654, f'Вышла новая новость {news_name}, начинаю отправку пользователям', parse_mode='html')
                 cursor.execute("SELECT user_id FROM users")
                 for user_id in cursor:
                     try:
-                        bot.send_message(*user_id, text=f'{news_name} \n\n{news_link}')
+                        bot.send_message(*user_id, text=f'{news_name} \n\n{news_link}', parse_mode='html')
                     except:
                         logger.info(f'Пользователь {user_id} заблокировал ботяру')
-                bot.send_message(765860654, f'Новость {news_name} доставлена всем пользователям')
+                bot.send_message(765860654, f'Новость {news_name} доставлена всем пользователям', parse_mode='html')
                 logger.info(f'Вышла новая новость, отправляю всем подписчикам: {news_name} - {news_link}')
         except sqlite3.IntegrityError:
             pass
@@ -253,6 +253,6 @@ def register_handlers_admin():
 
 # Каждые 10 минут срабатывает проверка на
 scheduler = BackgroundScheduler()
-scheduler.add_job(rss_sending, "interval", minutes=10)
+scheduler.add_job(rss_sending, "interval", minutes=1)
 scheduler.add_job(izmenenia_yadisk, "interval", minutes=60)
 scheduler.start()
