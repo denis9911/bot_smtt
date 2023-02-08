@@ -172,7 +172,7 @@ def message_reply(message):
                           chat_id=message.chat.id)
             bot.send_message(message.chat.id, text="Выберите курс:", reply_markup=markup)
         elif message.text == 'Ссылка на полное расписание':
-            bot.send_message(message.chat.id, text="https://disk.yandex.ru/d/-o2yqSzfbytH6A")
+            bot.send_message(message.chat.id, text="https://disk.yandex.ru/d/ZjHn5snVuAMfBA")
         elif message.text == 'Расписание звонков':
             path = r"raspisanie\raspisanie zvonkov"
             utils.photo_file_manage(path, message)
