@@ -61,7 +61,7 @@ def sending_message(message):
     if message.text == "Вернуться в главное меню":
         bot.send_message(message.chat.id, 'Задание отменено, нажмите кнопку ещё раз')
     else:
-        bot.send_message(message.cat.id, 'Начал отправку сообщения')
+        bot.send_message(message.chat.id, 'Начал отправку сообщения')
         cursor.execute("SELECT user_id FROM users")
         for users in cursor:
             try:
@@ -191,17 +191,18 @@ def rss_sending():
                 cursor.execute("INSERT INTO site_news VALUES(?, ?, ?);", news)
                 db.commit()
                 bot.send_message(765860654, f'Вышла новая новость {news_name}, начинаю отправку пользователям', parse_mode='html')
+                logger.info(f'Вышла новая новость, отправляю всем подписчикам: {news_name} - {news_link}')
                 cursor.execute("SELECT user_id FROM users")
                 for user_id in cursor:
                     try:
                         bot.send_message(*user_id, text=f'{news_name} \n\n{news_link}', parse_mode='html')
+                        logger.info(f'Отправил новость {user_id[0]}')
                         time.sleep(0.1)
                     except:
                         cursor.execute(f'DELETE FROM users WHERE user_id={user_id[0]}')
                         db.commit()
                         logger.info(f'Пользователь {user_id[0]} заблокировал ботяру, я его удалил')
                 bot.send_message(765860654, f'Новость {news_name} доставлена всем пользователям', parse_mode='html')
-                logger.info(f'Вышла новая новость, отправляю всем подписчикам: {news_name} - {news_link}')
         except sqlite3.IntegrityError:
             pass
     else:
@@ -261,6 +262,6 @@ def register_handlers_admin():
 
 # Каждые 10 минут срабатывает проверка на
 scheduler = BackgroundScheduler()
-scheduler.add_job(rss_sending, "interval", minutes=10)
+scheduler.add_job(rss_sending, "interval", minutes=3)
 scheduler.add_job(izmenenia_yadisk, "interval", minutes=60)
 scheduler.start()
