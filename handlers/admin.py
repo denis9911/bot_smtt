@@ -1,4 +1,6 @@
 import sqlite3
+import time
+
 from apscheduler.schedulers.background import BackgroundScheduler
 from telebot import types
 from bs4 import BeautifulSoup
@@ -64,6 +66,7 @@ def sending_message(message):
         for users in cursor:
             try:
                 bot.copy_message(message_id=message.id, from_chat_id=message.chat.id, *users)
+                time.sleep(0.04)
             except:
                 logger.info(f'Пользователь {users} заблокировал ботяру')
         bot.send_message(message.chat.id, 'Сообщение доставлено всем пользователям')
@@ -190,6 +193,7 @@ def rss_sending():
                 for user_id in cursor:
                     try:
                         bot.send_message(*user_id, text=f'{news_name} \n\n{news_link}', parse_mode='html')
+                        time.sleep(0.04)
                     except:
                         logger.info(f'Пользователь {user_id} заблокировал ботяру')
                 bot.send_message(765860654, f'Новость {news_name} доставлена всем пользователям', parse_mode='html')
