@@ -66,9 +66,11 @@ def sending_message(message):
         for users in cursor:
             try:
                 bot.copy_message(message_id=message.id, from_chat_id=message.chat.id, *users)
-                time.sleep(0.04)
+                time.sleep(0.1)
             except:
-                logger.info(f'Пользователь {users} заблокировал ботяру')
+                cursor.execute(f'DELETE FROM users WHERE user_id={users[0]}')
+                db.commit()
+                logger.info(f'Пользователь {users[0]} заблокировал ботяру, я его удалил')
         bot.send_message(message.chat.id, 'Сообщение доставлено всем пользователям')
         logger.info(f'Пользователь {message.chat.id} отправил подписчикам {message.text}')
 
@@ -193,9 +195,11 @@ def rss_sending():
                 for user_id in cursor:
                     try:
                         bot.send_message(*user_id, text=f'{news_name} \n\n{news_link}', parse_mode='html')
-                        time.sleep(0.04)
+                        time.sleep(0.1)
                     except:
-                        logger.info(f'Пользователь {user_id} заблокировал ботяру')
+                        cursor.execute(f'DELETE FROM users WHERE user_id={user_id[0]}')
+                        db.commit()
+                        logger.info(f'Пользователь {user_id[0]} заблокировал ботяру, я его удалил')
                 bot.send_message(765860654, f'Новость {news_name} доставлена всем пользователям', parse_mode='html')
                 logger.info(f'Вышла новая новость, отправляю всем подписчикам: {news_name} - {news_link}')
         except sqlite3.IntegrityError:
