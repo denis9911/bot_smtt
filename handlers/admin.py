@@ -68,7 +68,8 @@ def sending_message(message):
                 bot.copy_message(message_id=message.id, from_chat_id=message.chat.id, *users)
                 time.sleep(0.25)
             except:
-                pass
+                logger.info(f'Не смог отправить {users[0]}')
+                time.sleep(0.25)
         bot.send_message(message.chat.id, 'Сообщение доставлено всем пользователям')
         logger.info(f'Пользователь {message.chat.id} отправил подписчикам {message.text}')
 
@@ -174,8 +175,6 @@ def rss_switch(message):
 
 def rss_sending():
     if send_rss:
-        cursor.execute("CREATE TABLE IF NOT EXISTS site_news(news_name text, news_date text, news_link text UNIQUE)")
-        db.commit()
         url = requests.get("http://satehm.ru/news/rss")
         site_content = BeautifulSoup(url.content, 'xml')
         site_items = site_content.find_all('item')
@@ -192,14 +191,19 @@ def rss_sending():
                 bot.send_message(765860654, f'Вышла новая новость {news_name}, начинаю отправку пользователям', parse_mode='html')
                 logger.info(f'Вышла новая новость, отправляю всем подписчикам: {news_name} - {news_link}')
                 cursor.execute("SELECT user_id FROM users")
-                for user_id in cursor:
+                success_send = 0
+                unsuccess_send = 0
+                for user_id in cursor.fetchall():
                     try:
                         bot.send_message(*user_id, text=f'{news_name} \n\n{news_link}', parse_mode='html')
                         logger.info(f'Отправил новость {user_id[0]}')
+                        success_send += 1
                         time.sleep(0.25)
                     except:
-                        pass
-                bot.send_message(765860654, f'Новость {news_name} доставлена всем пользователям', parse_mode='html')
+                        logger.info(f'Не смог отправить {user_id[0]}')
+                        unsuccess_send += 1
+                        time.sleep(0.25)
+                bot.send_message(765860654, f'Новость {news_name} удачно доставлена {success_send} челам и неудачно {unsuccess_send} челам', parse_mode='html')
             else:
                 logger.info('Последняя новость:'+news_name)
     else:
