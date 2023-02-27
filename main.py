@@ -143,7 +143,8 @@ def message_reply(message):
                 bot.send_message(message.chat.id, text='Расписание для текущей или следующей недели?',
                                  reply_markup=markup)
             else:
-                bot.send_message(message.chat.id, text='Расписание отсутствует')
+                bot.send_message(message.chat.id,
+                                 text='Расписание на текущую неделю не работает, можете посмотреть актуальное расписание по ссылке: https://disk.yandex.ru/d/ZjHn5snVuAMfBA')
         elif message.text == 'Полный список изменений':
             path = r'\\192.168.0.5\pool1\user\Миллер К.М\tgbot'  # Отправляем папку
             file_buttons = []
