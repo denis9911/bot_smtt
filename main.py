@@ -178,7 +178,8 @@ def message_reply(message):
             path = r"raspisanie\raspisanie zvonkov"
             utils.photo_file_manage(path, message)
         elif message.text == 'Заочникам':
-            bot.send_message(message.chat.id, text="http://www.satehm.ru/studentam/zaochnoe-otdelenie/")
+            bot.send_message(message.chat.id, text=f"Раписание для студентов - заочников: https://clck.ru/33eGeE")
+            bot.send_message(message.chat.id, text=f"Вся информация для заочников: http://www.satehm.ru/studentam/zaochnoe-otdelenie/")
         elif message.text == 'Расписание кружков и секций':
             path = r"raspisanie\raspisanie kruzhkov i sekcij"
             utils.photo_file_manage(path, message)
