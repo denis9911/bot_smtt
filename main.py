@@ -81,6 +81,7 @@ def message_reply(message):
 
         elif message.text == 'Правила приёма':
             path = r'abiturienty\pravila_priyoma'
+            bot.send_message(message.chat.id, text='Отправляю правила приёма...')
             utils.doc_file_manage(path, message)
 
         elif message.text == 'Контакты приёмной комиссии':
@@ -90,6 +91,7 @@ def message_reply(message):
                                   "https://t.me/abituraSMTT - телеграм-канал для абитуриентов\nhttps://t.me/Smtteh_bot - телеграм-бот СМТТ")
 
         elif message.text == 'Вступительные экзамены':
+            bot.send_message(message.chat.id, text='Отправляю вступительные экзамены...')
             bot.send_message(message.chat.id, text="ПРИЁМ В ТЕХНИКУМ - БЕЗ ВСТУПИТЕЛЬНЫХ ЭКЗАМЕНОВ\n"
                                                    "\nПри поступлении учитывается средний балл аттестата, а при конкурсе "
                                                    "больше одного поступающего на место рассматривается средний балл по "
@@ -98,6 +100,7 @@ def message_reply(message):
             utils.photo_file_manage(path, message)
 
         elif message.text == 'Перечень необходимых документов':
+            bot.send_message(message.chat.id, text='Отправляю перечень необходимых документов...')
             bot.send_message(message.chat.id, 'Приём документов от НЕСОВЕРШЕННОЛЕТНИХ абитуриентов осуществляется в '
                                               'присутствии законных представителей (родителей, усыновителей, попечителей '
                                               '(опекунов), которые представляют следующие документы (оригинал и копию): '
@@ -109,6 +112,7 @@ def message_reply(message):
             utils.photo_file_manage(path, message)
 
         elif message.text == 'Специальности, профессии и срок обучения':
+            bot.send_message(message.chat.id, text='Отправляю специальности, профессии и срок обучения...')
             path = r'abiturienty\specialnosti_professii_i_srok_obucheniya'
             utils.photo_file_manage(path, message)
 
