@@ -15,17 +15,17 @@ def message_reply(message):
     utils.register_new_users(message)  # В главном меню пробуем регистрировать каждого юзера, так как остались старые пользователи бота, которые не проходили через /start
     try:
         if message.text == "🙋🏻‍♂️ ‍Абитуриентам 🙋🏻‍♂️":
-            markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
+            markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
             btn1 = types.KeyboardButton("Приказы о зачислении 2022")
             btn2 = types.KeyboardButton("Правила приёма")
             btn3 = types.KeyboardButton("Контакты приёмной комиссии")
             btn4 = types.KeyboardButton("Вступительные экзамены")
             btn5 = types.KeyboardButton("Перечень необходимых документов")
             btn6 = types.KeyboardButton("Специальности, профессии и срок обучения")
-            btn7 = types.KeyboardButton("Информация об обеспечении возможности получения"
-                                        " образования инвалидами и лицами с ОВЗ")
+            btn7 = types.KeyboardButton("Информация для инвалидов и лицам с ОВЗ")
             back = types.KeyboardButton("Вернуться в главное меню")
-            markup.add(btn1, btn2, btn3, btn4, btn5, btn6, btn7, back)
+            markup.add(btn1, btn2, btn3, btn4, btn5, btn6, btn7)
+            markup.add(back)
             bot.send_message(message.chat.id, text="Выберите один из пунктов меню:", reply_markup=markup)
 
         # Нажатие на кнопку Приказы о зачислении отправляет документы, в имени которых есть месяц приказа из папки
@@ -36,7 +36,7 @@ def message_reply(message):
             btn3 = types.KeyboardButton("Заочное (бюджет)")
             btn4 = types.KeyboardButton("Заочное (внебюджет)")
             back = types.KeyboardButton("Вернуться в главное меню")
-            markup.add(btn1, btn3, btn2, btn4, back)
+            markup.add(back)    # вернуть кнопки потом
             bot.send_message(message.chat.id, text="Выберите один из пунктов меню:", reply_markup=markup)
 
         elif message.text == "Очное (бюджет)":
