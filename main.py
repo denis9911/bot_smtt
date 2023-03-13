@@ -116,7 +116,7 @@ def message_reply(message):
             path = r'abiturienty\specialnosti_professii_i_srok_obucheniya'
             utils.photo_file_manage(path, message)
 
-        elif message.text == 'Информация об обеспечении возможности получения образования инвалидами и лицами с ОВЗ':
+        elif message.text == 'Информация для инвалидов и лицам с ОВЗ':
             bot.send_message(message.chat.id, text='http://www.satehm.ru/sveden/ovz/')
 
 
