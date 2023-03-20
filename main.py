@@ -20,11 +20,13 @@ def message_reply(message):
             btn2 = types.KeyboardButton("Правила приёма")
             btn3 = types.KeyboardButton("Контакты приёмной комиссии")
             btn4 = types.KeyboardButton("Вступительные экзамены")
-            btn5 = types.KeyboardButton("Перечень необходимых документов")
+            btn5 = types.KeyboardButton("Перечень документов")
             btn6 = types.KeyboardButton("Специальности, профессии и срок обучения")
-            btn7 = types.KeyboardButton("Информация для инвалидов и лицам с ОВЗ")
+            btn7 = types.KeyboardButton("Информация для инвалидов и лиц с ОВЗ")
             back = types.KeyboardButton("Вернуться в главное меню")
-            markup.add(btn2, btn3, btn4, btn5, btn6, btn7)
+            markup.add(btn2, btn3, btn4, btn5)
+            markup.add(btn6)
+            markup.add(btn7)
             markup.add(back)
             bot.send_message(message.chat.id, text="Выберите один из пунктов меню:", reply_markup=markup)
 
@@ -99,7 +101,7 @@ def message_reply(message):
             path = r'abiturienty\vstupitelnye_ekzameny'
             utils.photo_file_manage(path, message)
 
-        elif message.text == 'Перечень необходимых документов':
+        elif message.text == 'Перечень документов':
             bot.send_message(message.chat.id, text='Отправляю перечень необходимых документов...')
             bot.send_message(message.chat.id, 'Приём документов от НЕСОВЕРШЕННОЛЕТНИХ абитуриентов осуществляется в '
                                               'присутствии законных представителей (родителей, усыновителей, попечителей '
@@ -116,7 +118,7 @@ def message_reply(message):
             path = r'abiturienty\specialnosti_professii_i_srok_obucheniya'
             utils.photo_file_manage(path, message)
 
-        elif message.text == 'Информация для инвалидов и лицам с ОВЗ':
+        elif message.text == 'Информация для инвалидов и лиц с ОВЗ':
             bot.send_message(message.chat.id, text='http://www.satehm.ru/sveden/ovz/')
 
 
