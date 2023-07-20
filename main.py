@@ -39,6 +39,8 @@ def message_reply(message):
             btn3 = types.KeyboardButton("Заочное (бюджет)")
             btn4 = types.KeyboardButton("Заочное (внебюджет)")
             back = types.KeyboardButton("Вернуться в главное меню")
+            markup.add(btn1, btn2)
+            markup.add(btn3, btn4)
             markup.add(back)    # вернуть кнопки потом
             bot.send_message(message.chat.id, text="Выберите один из пунктов меню:", reply_markup=markup)
 
@@ -53,7 +55,7 @@ def message_reply(message):
                 for pdf in files:
                     bot.send_document(message.chat.id, document=open(pdf, 'rb'))
             else:
-                bot.send_message(message.chat.id, message=f'В разделе {message.text} приказов нет')
+                bot.send_message(message.chat.id, text=f'В данном разделе отсутствуют приказы')
 
         elif message.text == "Очное (внебюджет)":
             path = r'abiturienty\prikazy_o_zachislenii'  # Отправляем папку
@@ -66,7 +68,7 @@ def message_reply(message):
                 for pdf in files:
                     bot.send_document(message.chat.id, document=open(pdf, 'rb'))
             else:
-                bot.send_message(message.chat.id, message=f'В разделе {message.text} приказов нет')
+                bot.send_message(message.chat.id, text=f'В данном разделе отсутствуют приказы')
 
         elif message.text == "Заочное (бюджет)":
             path = r'abiturienty\prikazy_o_zachislenii_2022'  # Отправляем папку
@@ -79,7 +81,7 @@ def message_reply(message):
                 for pdf in files:
                     bot.send_document(message.chat.id, document=open(pdf, 'rb'))
             else:
-                bot.send_message(message.chat.id, message=f'В разделе {message.text} приказов нет')
+                bot.send_message(message.chat.id, text=f'В данном разделе отсутствуют приказы')
 
         elif message.text == "Заочное (внебюджет)":
             path = r'abiturienty\prikazy_o_zachislenii_2022'  # Отправляем папку
@@ -92,7 +94,7 @@ def message_reply(message):
                 for pdf in files:
                     bot.send_document(message.chat.id, document=open(pdf, 'rb'))
             else:
-                bot.send_message(message.chat.id, message=f'В разделе {message.text} приказов нет')
+                bot.send_message(message.chat.id, text=f'В данном разделе отсутствуют приказы')
 
         elif message.text == 'Правила приёма':
             path = r'abiturienty\pravila_priyoma'
