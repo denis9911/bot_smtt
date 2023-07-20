@@ -42,24 +42,30 @@ def message_reply(message):
             bot.send_message(message.chat.id, text="Выберите один из пунктов меню:", reply_markup=markup)
 
         elif message.text == "Очное (бюджет)":
-            path = r'abiturienty\prikazy_o_zachislenii_2022'  # Отправляем папку
+            path = r'abiturienty\prikazy_o_zachislenii'  # Отправляем папку
             files = []
             for root, d, folder in os.walk(path):
                 for orders in folder:
                     if 'очное бюджет' in orders:
                         files.append(os.path.join(root, orders))
-            for pdf in files:
-                bot.send_document(message.chat.id, document=open(pdf, 'rb'))
+            if len(files) > 0:
+                for pdf in files:
+                    bot.send_document(message.chat.id, document=open(pdf, 'rb'))
+            else:
+                bot.send_message(message.chat.id, message=f'В разделе {message.text} приказов нет')
 
         elif message.text == "Очное (внебюджет)":
-            path = r'abiturienty\prikazy_o_zachislenii_2022'  # Отправляем папку
+            path = r'abiturienty\prikazy_o_zachislenii'  # Отправляем папку
             files = []
             for root, d, folder in os.walk(path):
                 for orders in folder:
                     if 'очное внебюджет' in orders:
                         files.append(os.path.join(root, orders))
-            for pdf in files:
-                bot.send_document(message.chat.id, document=open(pdf, 'rb'))
+            if len(files) > 0:
+                for pdf in files:
+                    bot.send_document(message.chat.id, document=open(pdf, 'rb'))
+            else:
+                bot.send_message(message.chat.id, message=f'В разделе {message.text} приказов нет')
 
         elif message.text == "Заочное (бюджет)":
             path = r'abiturienty\prikazy_o_zachislenii_2022'  # Отправляем папку
@@ -68,8 +74,11 @@ def message_reply(message):
                 for orders in folder:
                     if 'заоч бюджет' in orders:
                         files.append(os.path.join(root, orders))
-            for pdf in files:
-                bot.send_document(message.chat.id, document=open(pdf, 'rb'))
+            if len(files) > 0:
+                for pdf in files:
+                    bot.send_document(message.chat.id, document=open(pdf, 'rb'))
+            else:
+                bot.send_message(message.chat.id, message=f'В разделе {message.text} приказов нет')
 
         elif message.text == "Заочное (внебюджет)":
             path = r'abiturienty\prikazy_o_zachislenii_2022'  # Отправляем папку
@@ -78,8 +87,11 @@ def message_reply(message):
                 for orders in folder:
                     if 'заоч внебюджет' in orders:
                         files.append(os.path.join(root, orders))
-            for pdf in files:
-                bot.send_document(message.chat.id, document=open(pdf, 'rb'))
+            if len(files) > 0:
+                for pdf in files:
+                    bot.send_document(message.chat.id, document=open(pdf, 'rb'))
+            else:
+                bot.send_message(message.chat.id, message=f'В разделе {message.text} приказов нет')
 
         elif message.text == 'Правила приёма':
             path = r'abiturienty\pravila_priyoma'
@@ -88,7 +100,7 @@ def message_reply(message):
 
         elif message.text == 'Контакты приёмной комиссии':
             bot.send_message(message.chat.id,
-                             text="Адрес: 662500, Красноярский край, г. Сосновоборск, ул. Юности, 7 (Корпус А, каб. А-2)\n"
+                             text="Адрес: 662500, Красноярский край, г. Сосновоборск, ул. Юности, 7 (Корпус А, каб. А-104)\n"
                                   "Тел.: 8 (39131) 2-16-93 (доб. 111)\ne-mail: priemsmtt@smtt24.ru; сайт: www.satehm.ru\n"
                                   "https://t.me/abituraSMTT - телеграм-канал для абитуриентов\nhttps://t.me/Smtteh_bot - телеграм-бот СМТТ")
 
