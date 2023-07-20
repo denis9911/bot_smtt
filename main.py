@@ -16,7 +16,7 @@ def message_reply(message):
     try:
         if message.text == "🙋🏻‍♂️ ‍Абитуриентам 🙋🏻‍♂️":
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
-            btn1 = types.KeyboardButton("Приказы о зачислении 2022")    # вернуть
+            btn1 = types.KeyboardButton("Приказы о зачислении 2022")
             btn2 = types.KeyboardButton("Правила приёма")
             btn3 = types.KeyboardButton("Контакты приёмной комиссии")
             btn4 = types.KeyboardButton("Вступительные экзамены")
@@ -24,6 +24,7 @@ def message_reply(message):
             btn6 = types.KeyboardButton("Специальности, профессии и срок обучения")
             btn7 = types.KeyboardButton("Информация для инвалидов и лиц с ОВЗ")
             back = types.KeyboardButton("Вернуться в главное меню")
+            markup.add(btn1)
             markup.add(btn2, btn3, btn4, btn5)
             markup.add(btn6)
             markup.add(btn7)
