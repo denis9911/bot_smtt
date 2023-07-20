@@ -41,7 +41,7 @@ def message_reply(message):
             back = types.KeyboardButton("Вернуться в главное меню")
             markup.add(btn1, btn2)
             markup.add(btn3, btn4)
-            markup.add(back)    # вернуть кнопки потом
+            markup.add(back)
             bot.send_message(message.chat.id, text="Выберите один из пунктов меню:", reply_markup=markup)
 
         elif message.text == "Очное (бюджет)":
@@ -100,6 +100,7 @@ def message_reply(message):
             path = r'abiturienty\pravila_priyoma'
             bot.send_message(message.chat.id, text='Отправляю правила приёма...')
             utils.doc_file_manage(path, message)
+            bot.send_message(message.chat.id, text='Подробнее на сайте в разделе Абитуриентам http://satehm.ru/abitur/')
 
         elif message.text == 'Контакты приёмной комиссии':
             bot.send_message(message.chat.id,
