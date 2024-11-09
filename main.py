@@ -12,20 +12,23 @@ client.register_handlers_client()
 # Меню
 @bot.message_handler(content_types=['text'])
 def message_reply(message):
-    utils.register_new_users(message)
+    utils.register_new_users(message)  # В главном меню пробуем регистрировать каждого юзера, так как остались старые пользователи бота, которые не проходили через /star
     try:
         if message.text == "🙋🏻‍♂️ ‍Абитуриентам 🙋🏻‍♂️":
-            markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
+            markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=2)
             btn1 = types.KeyboardButton("Приказы о зачислении 2022")
             btn2 = types.KeyboardButton("Правила приёма")
             btn3 = types.KeyboardButton("Контакты приёмной комиссии")
             btn4 = types.KeyboardButton("Вступительные экзамены")
-            btn5 = types.KeyboardButton("Перечень необходимых документов")
+            btn5 = types.KeyboardButton("Перечень документов")
             btn6 = types.KeyboardButton("Специальности, профессии и срок обучения")
-            btn7 = types.KeyboardButton("Информация об обеспечении возможности получения"
-                                        " образования инвалидами и лицами с ОВЗ")
+            btn7 = types.KeyboardButton("Информация для инвалидов и лиц с ОВЗ")
             back = types.KeyboardButton("Вернуться в главное меню")
-            markup.add(btn1, btn2, btn3, btn4, btn5, btn6, btn7, back)
+            markup.add(btn1)
+            markup.add(btn2, btn3, btn4, btn5)
+            markup.add(btn6)
+            markup.add(btn7)
+            markup.add(back)
             bot.send_message(message.chat.id, text="Выберите один из пунктов меню:", reply_markup=markup)
 
         # Нажатие на кнопку Приказы о зачислении отправляет документы, в имени которых есть месяц приказа из папки
@@ -36,28 +39,36 @@ def message_reply(message):
             btn3 = types.KeyboardButton("Заочное (бюджет)")
             btn4 = types.KeyboardButton("Заочное (внебюджет)")
             back = types.KeyboardButton("Вернуться в главное меню")
-            markup.add(btn1, btn3, btn2, btn4, back)
+            markup.add(btn1, btn2)
+            markup.add(btn3, btn4)
+            markup.add(back)
             bot.send_message(message.chat.id, text="Выберите один из пунктов меню:", reply_markup=markup)
 
         elif message.text == "Очное (бюджет)":
-            path = r'abiturienty\prikazy_o_zachislenii_2022'  # Отправляем папку
+            path = r'abiturienty\prikazy_o_zachislenii'  # Отправляем папку
             files = []
             for root, d, folder in os.walk(path):
                 for orders in folder:
                     if 'очное бюджет' in orders:
                         files.append(os.path.join(root, orders))
-            for pdf in files:
-                bot.send_document(message.chat.id, document=open(pdf, 'rb'))
+            if len(files) > 0:
+                for pdf in files:
+                    bot.send_document(message.chat.id, document=open(pdf, 'rb'))
+            else:
+                bot.send_message(message.chat.id, text=f'В данном разделе отсутствуют приказы')
 
         elif message.text == "Очное (внебюджет)":
-            path = r'abiturienty\prikazy_o_zachislenii_2022'  # Отправляем папку
+            path = r'abiturienty\prikazy_o_zachislenii'  # Отправляем папку
             files = []
             for root, d, folder in os.walk(path):
                 for orders in folder:
                     if 'очное внебюджет' in orders:
                         files.append(os.path.join(root, orders))
-            for pdf in files:
-                bot.send_document(message.chat.id, document=open(pdf, 'rb'))
+            if len(files) > 0:
+                for pdf in files:
+                    bot.send_document(message.chat.id, document=open(pdf, 'rb'))
+            else:
+                bot.send_message(message.chat.id, text=f'В данном разделе отсутствуют приказы')
 
         elif message.text == "Заочное (бюджет)":
             path = r'abiturienty\prikazy_o_zachislenii_2022'  # Отправляем папку
@@ -66,8 +77,11 @@ def message_reply(message):
                 for orders in folder:
                     if 'заоч бюджет' in orders:
                         files.append(os.path.join(root, orders))
-            for pdf in files:
-                bot.send_document(message.chat.id, document=open(pdf, 'rb'))
+            if len(files) > 0:
+                for pdf in files:
+                    bot.send_document(message.chat.id, document=open(pdf, 'rb'))
+            else:
+                bot.send_message(message.chat.id, text=f'В данном разделе отсутствуют приказы')
 
         elif message.text == "Заочное (внебюджет)":
             path = r'abiturienty\prikazy_o_zachislenii_2022'  # Отправляем папку
@@ -76,19 +90,26 @@ def message_reply(message):
                 for orders in folder:
                     if 'заоч внебюджет' in orders:
                         files.append(os.path.join(root, orders))
-            for pdf in files:
-                bot.send_document(message.chat.id, document=open(pdf, 'rb'))
+            if len(files) > 0:
+                for pdf in files:
+                    bot.send_document(message.chat.id, document=open(pdf, 'rb'))
+            else:
+                bot.send_message(message.chat.id, text=f'В данном разделе отсутствуют приказы')
 
         elif message.text == 'Правила приёма':
             path = r'abiturienty\pravila_priyoma'
+            bot.send_message(message.chat.id, text='Отправляю правила приёма...')
             utils.doc_file_manage(path, message)
+            bot.send_message(message.chat.id, text='Подробнее на сайте в разделе Абитуриентам http://satehm.ru/abitur/')
 
         elif message.text == 'Контакты приёмной комиссии':
             bot.send_message(message.chat.id,
-                             text="Адрес: 662500, Красноярский край, г. Сосновоборск, ул. Юности, 7 (Корпус А)"
-                                  "\nТел.: 8 (39131) 2-16-93 (доб. 111)\ne-mail: priemsmtt@smtt24.ru; сайт: www.satehm.ru")
+                             text="Адрес: 662500, Красноярский край, г. Сосновоборск, ул. Юности, 7 (Корпус А, каб. А-104)\n"
+                                  "Тел.: 8 (39131) 2-16-93 (доб. 111)\ne-mail: priemsmtt@smtt24.ru; сайт: www.satehm.ru\n"
+                                  "https://t.me/abituraSMTT - телеграм-канал для абитуриентов\nhttps://t.me/Smtteh_bot - телеграм-бот СМТТ")
 
         elif message.text == 'Вступительные экзамены':
+            bot.send_message(message.chat.id, text='Отправляю вступительные экзамены...')
             bot.send_message(message.chat.id, text="ПРИЁМ В ТЕХНИКУМ - БЕЗ ВСТУПИТЕЛЬНЫХ ЭКЗАМЕНОВ\n"
                                                    "\nПри поступлении учитывается средний балл аттестата, а при конкурсе "
                                                    "больше одного поступающего на место рассматривается средний балл по "
@@ -96,22 +117,24 @@ def message_reply(message):
             path = r'abiturienty\vstupitelnye_ekzameny'
             utils.photo_file_manage(path, message)
 
-        elif message.text == 'Перечень необходимых документов':
+        elif message.text == 'Перечень документов':
+            bot.send_message(message.chat.id, text='Отправляю перечень необходимых документов...')
             bot.send_message(message.chat.id, 'Приём документов от НЕСОВЕРШЕННОЛЕТНИХ абитуриентов осуществляется в '
                                               'присутствии законных представителей (родителей, усыновителей, попечителей '
                                               '(опекунов), которые представляют следующие документы (оригинал и копию): '
                                               'паспорт, свидетельство о рождении абитуриента, акт органа опеки и '
-                                              'попечительства о назначении опекуна или попечителя.Законные представители '
+                                              'попечительства о назначении опекуна или попечителя.\nЗаконные представители '
                                               'несовершеннолетних вправе оформить нотариально удостоверенную доверенность '
                                               'на другое физическое лицо для представления своих интересов.')
             path = r'abiturienty\perechen_neobhodimyh_dokumentov'
             utils.photo_file_manage(path, message)
 
         elif message.text == 'Специальности, профессии и срок обучения':
+            bot.send_message(message.chat.id, text='Отправляю специальности, профессии и срок обучения...')
             path = r'abiturienty\specialnosti_professii_i_srok_obucheniya'
             utils.photo_file_manage(path, message)
 
-        elif message.text == 'Информация об обеспечении возможности получения образования инвалидами и лицами с ОВЗ':
+        elif message.text == 'Информация для инвалидов и лиц с ОВЗ':
             bot.send_message(message.chat.id, text='http://www.satehm.ru/sveden/ovz/')
 
 
@@ -133,14 +156,18 @@ def message_reply(message):
             markup.add(back)
             bot.send_message(message.chat.id, text="Выберите один из пунктов меню:", reply_markup=markup)
         elif message.text == "Расписание" + '\n' + "очное":
-            markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
-            btn1 = types.KeyboardButton('Текущая неделя')
-            btn2 = types.KeyboardButton('Следующая неделя')
-            cancel = types.KeyboardButton('Вернуться в главное меню')
-            markup.add(btn1, btn2, cancel)
-            bot.set_state(user_id=message.from_user.id, state=ScheduleStates.week_in_a_row, chat_id=message.chat.id)
-            bot.send_message(message.chat.id, text='Расписание для текущей или следующей недели?',
-                             reply_markup=markup)
+            if os.path.exists(r'\\192.168.0.5\pool1\user\Миллер К.М\tgbot\raspisanie.xlsx'):
+                markup = types.ReplyKeyboardMarkup(resize_keyboard=True, row_width=1)
+                btn1 = types.KeyboardButton('Текущая неделя')
+                btn2 = types.KeyboardButton('Следующая неделя')
+                cancel = types.KeyboardButton('Вернуться в главное меню')
+                markup.add(btn1, btn2, cancel)
+                bot.set_state(user_id=message.from_user.id, state=ScheduleStates.week_in_a_row, chat_id=message.chat.id)
+                bot.send_message(message.chat.id, text='Расписание для текущей или следующей недели?',
+                                 reply_markup=markup)
+            else:
+                bot.send_message(message.chat.id,
+                                 text='Расписание на текущую неделю не работает, можете посмотреть актуальное расписание по ссылке: https://disk.yandex.ru/d/ZjHn5snVuAMfBA')
         elif message.text == 'Полный список изменений':
             path = r'\\192.168.0.5\pool1\user\Миллер К.М\tgbot'  # Отправляем папку
             file_buttons = []
@@ -156,8 +183,6 @@ def message_reply(message):
             bot.set_state(message.from_user.id, ScheduleStates.full_list_changes, message.chat.id)
 
         elif message.text == "Расписание" + '\n' + "экзаменов":
-            path = r'\\192.168.0.5\pool1\user\Миллер К.М\tgbot\exams'
-            buttons = []
             markup = types.ReplyKeyboardMarkup(row_width=2)
             btn1 = types.KeyboardButton('1 курс')
             btn2 = types.KeyboardButton('2 курс')
@@ -171,12 +196,13 @@ def message_reply(message):
                           chat_id=message.chat.id)
             bot.send_message(message.chat.id, text="Выберите курс:", reply_markup=markup)
         elif message.text == 'Ссылка на полное расписание':
-            bot.send_message(message.chat.id, text="https://disk.yandex.ru/d/-o2yqSzfbytH6A")
+            bot.send_message(message.chat.id, text="https://disk.yandex.ru/d/ZjHn5snVuAMfBA")
         elif message.text == 'Расписание звонков':
             path = r"raspisanie\raspisanie zvonkov"
             utils.photo_file_manage(path, message)
         elif message.text == 'Заочникам':
-            bot.send_message(message.chat.id, text="http://www.satehm.ru/studentam/zaochnoe-otdelenie/")
+            bot.send_message(message.chat.id, text=f"Раписание для студентов - заочников: https://clck.ru/33eGeE")
+            bot.send_message(message.chat.id, text=f"Вся информация для заочников: http://www.satehm.ru/studentam/zaochnoe-otdelenie/")
         elif message.text == 'Расписание кружков и секций':
             path = r"raspisanie\raspisanie kruzhkov i sekcij"
             utils.photo_file_manage(path, message)
@@ -329,15 +355,14 @@ def message_reply(message):
                                   "водителей категории «В».\nНачало занятий по мере комплектации "
                                   "групп.\nТеоретические занятия проводятся в вечернее время. Вождение "
                                   "автомобиля - по отдельному графику, учитывающему пожелания "
-                                  "обучающихся.\nСтоимость обучения – 31 тысяча рублей, возможна оплата "
+                                  "обучающихся.\nСтоимость обучения – 34 тысячи рублей, возможна оплата "
                                   "помесячно. Для студентов СМТТ предусмотрены скидки.",
                              reply_markup=markup)
         elif message.text == 'Автокурсы - Контакты':
             bot.send_message(message.chat.id,
                              text='Контакты:\nмоб. +7(983)201-0973\nтел. 8(39131)2-16-93, доб. 116\nкаб. '
-                                  'А-11, корпус А, Юности, 7\nАржаников Владимир Владимирович\n\nмоб. +7('
-                                  '950)997-3838 \nтел. 8(39131)2-16-93, доб. 114\nкаб. 108 корпус А, '
-                                  'Юности, 7\nКарабарина Лариса Юрьевна')
+                                  'А-11, корпус А, Юности, 7\nАржаников Владимир Владимирович\n\nтел. 8(39131)2-16-93, доб. 114\nкаб. А-11 корпус А, '
+                                  'Юности, 7\nИзгорева Анна Викторовна')
         elif message.text == 'Автокурсы - Необходимые документы':
             bot.send_message(message.chat.id, text='Для записи в автошколу необходимо предоставить документы:\n- '
                                                    'паспорт;\n- документ об образовании (аттестат, диплом);\n- СНИЛС;\n- '
@@ -361,7 +386,7 @@ def message_reply(message):
 
         # Кнопка показывает реквизиты для оплаты обучения
         elif message.text == '💵 Реквизиты для оплаты обучения 💵':
-            bot.send_message(message.chat.id, text="http://www.satehm.ru/studentam/rekvizity-dlya-oplaty/:")
+            bot.send_message(message.chat.id, text="http://www.satehm.ru/studentam/rekvizity-dlya-oplaty/")
 
 
         # Кнопка показывает Контакты
@@ -375,7 +400,8 @@ def message_reply(message):
                              "\nТелефон заочного отделения: +7 (39131) 21693 (доб. 109)"
                              "\nЭл. почта секретаря директора: secret@smtt24.ru\n"
                              "\nСайт: http://www.satehm.ru", reply_markup=markup)
-            bot.send_message(message.chat.id, text='Выберите один из пунктов меню или напишите 1 ключевое слово для поиска (Фамилия/Имя/Отчество/Должность/Кабинет)')
+            bot.send_message(message.chat.id,
+                             text='Выберите один из пунктов меню или напишите 1 ключевое слово для поиска (Фамилия/Имя/Отчество/Должность/Кабинет)')
             bot.set_state(message.from_user.id, Contacts.find_contact, message.chat.id)
 
         # Вернуться в меню - дублирует меню

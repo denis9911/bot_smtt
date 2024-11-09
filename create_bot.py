@@ -11,7 +11,8 @@ from dotenv import load_dotenv, find_dotenv
 state_storage = StateMemoryStorage()
 # Бот и его ключ, бд
 load_dotenv(find_dotenv())
-bot = telebot.TeleBot(os.getenv('TOKEN'), state_storage=state_storage)
+bot = telebot.TeleBot(os.getenv('BOT_TOKEN'), state_storage=state_storage)
+yandex_token = os.getenv('YADISK_TOKEN')
 logger.add('bot.log', format="{time} {level} {message}", level="DEBUG", rotation="1 MB")
 db = sqlite3.connect('bot_db.db', check_same_thread=False)
 cursor = db.cursor()
@@ -44,4 +45,3 @@ class Contacts(StatesGroup):
 
 
 bot.add_custom_filter(custom_filters.StateFilter(bot))
-bot.add_custom_filter(custom_filters.IsDigitFilter())

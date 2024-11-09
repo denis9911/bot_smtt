@@ -16,7 +16,6 @@ def start(message):
         logger.info(f'Новый пользователь: {user}')
     except:
         bot.send_message(message.chat.id, "Привет, вы уже находитесь в базе данных, напишите /menu")
-        logger.info(f'Старый пользователь нажал старт: {user}')
 
 
 # Меню help

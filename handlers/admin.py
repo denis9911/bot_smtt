@@ -1,11 +1,13 @@
 import sqlite3
+import time
+
 from apscheduler.schedulers.background import BackgroundScheduler
 from telebot import types
 from bs4 import BeautifulSoup
 import requests
 from datetime import datetime as dt
 from loguru import logger
-from create_bot import bot, cursor, db, admins, Feedback
+from create_bot import bot, cursor, db, admins, Feedback, yandex_token
 import yadisk
 
 send_rss = True
@@ -59,9 +61,16 @@ def sending_message(message):
     if message.text == "Вернуться в главное меню":
         bot.send_message(message.chat.id, 'Задание отменено, нажмите кнопку ещё раз')
     else:
+        bot.send_message(message.chat.id, 'Начал отправку сообщения')
         cursor.execute("SELECT user_id FROM users")
-        for users in cursor:
-            bot.copy_message(message_id=message.id, from_chat_id=message.chat.id, *users)
+        for users in cursor.fetchall():
+            try:
+                bot.copy_message(message_id=message.id, from_chat_id=message.chat.id, *users)
+                time.sleep(0.25)
+            except:
+                logger.info(f'Не смог отправить {users[0]}')
+                time.sleep(0.25)
+        bot.send_message(message.chat.id, 'Сообщение доставлено всем пользователям')
         logger.info(f'Пользователь {message.chat.id} отправил подписчикам {message.text}')
 
 
@@ -76,6 +85,7 @@ def reg_send_message_to_user(message):
     else:
         bot.send_message(message.chat.id, "Это команда для администратора, Вы - им не являетесь 👀")
 
+
 @bot.message_handler(state=Feedback.send_message_to_user)
 def send_message_to_user(message):
     if message.text == "Вернуться в главное меню":
@@ -87,14 +97,17 @@ def send_message_to_user(message):
             data['sending_user_id'] = message.text
         bot.set_state(message.from_user.id, Feedback.sending_message_to_user, message.chat.id)
 
+
 @bot.message_handler(state=Feedback.sending_message_to_user, content_types=types.util.content_type_media)
 def sending_message_to_user(message):
     with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
         bot.copy_message(message_id=message.id, from_chat_id=message.chat.id, chat_id=data['sending_user_id'])
     markup = types.ReplyKeyboardMarkup()
     markup.add(types.KeyboardButton('Вернуться в главное меню'))
-    bot.send_message(message.chat.id, text=f'Сообщение "{message.text}" отправлено пользователю', reply_markup=markup)
+    for admin in admins:
+        bot.send_message(admin, text=f'Сообщение "{message.text}" отправлено пользователю', reply_markup=markup)
     bot.delete_state(message.from_user.id, message.chat.id)
+
 
 # @bot.message_handler(commands=['send_feedback'])
 def send_feedback(message):
@@ -162,29 +175,37 @@ def rss_switch(message):
 
 def rss_sending():
     if send_rss:
-        cursor.execute("CREATE TABLE IF NOT EXISTS site_news(news_name text, news_date text, news_link text UNIQUE)")
-        db.commit()
         url = requests.get("http://satehm.ru/news/rss")
         site_content = BeautifulSoup(url.content, 'xml')
         site_items = site_content.find_all('item')
-        try:
-            for item in site_items[:2]:
-                site_date = item.pubDate.text[:-5]
-                news_name = item.title.text
-                news_link = item.link.text
-                news_date = dt.strptime(site_date, '%a, %d %B %Y %H:%S:%M')
-                news = [news_name, news_date, news_link]
+        for item in site_items[:5]:
+            site_date = item.pubDate.text[:-5]
+            news_name = item.title.text
+            news_link = item.link.text
+            news_date = dt.strptime(site_date, '%a, %d %B %Y %H:%S:%M')
+            news = [news_name, news_date, news_link]
+            cursor.execute("SELECT news_name FROM site_news WHERE news_name=?", (news_name,))
+            if len(cursor.fetchall()) == 0:
                 cursor.execute("INSERT INTO site_news VALUES(?, ?, ?);", news)
                 db.commit()
-                cursor.execute("SELECT user_id FROM users")
-                for user_id in cursor:
-                    try:
-                        bot.send_message(*user_id, text=f'{news_name} \n\n{news_link}')
-                    except:
-                        logger.info(f'Пользователь {user_id} заблокировал ботяру')
+                bot.send_message(765860654, f'Вышла новая новость {news_name}, начинаю отправку пользователям', parse_mode='html')
                 logger.info(f'Вышла новая новость, отправляю всем подписчикам: {news_name} - {news_link}')
-        except sqlite3.IntegrityError:
-            pass
+                cursor.execute("SELECT user_id FROM users")
+                success_send = 0
+                unsuccess_send = 0
+                for user_id in cursor.fetchall():
+                    try:
+                        bot.send_message(*user_id, text=f'{news_name} \n\n{news_link}', parse_mode='html')
+                        logger.info(f'Отправил новость {user_id[0]}')
+                        success_send += 1
+                        time.sleep(0.25)
+                    except:
+                        logger.info(f'Не смог отправить {user_id[0]}')
+                        unsuccess_send += 1
+                        time.sleep(0.25)
+                bot.send_message(765860654, f'Новость {news_name} удачно доставлена {success_send} челам и неудачно {unsuccess_send} челам', parse_mode='html')
+            else:
+                logger.info('Последняя новость:'+news_name)
     else:
         logger.info('Отправка новостей с сайта отключена')
 
@@ -243,5 +264,5 @@ def register_handlers_admin():
 # Каждые 10 минут срабатывает проверка на
 scheduler = BackgroundScheduler()
 scheduler.add_job(rss_sending, "interval", minutes=10)
-scheduler.add_job(izmenenia_yadisk, "interval", minutes=30)
+scheduler.add_job(izmenenia_yadisk, "interval", minutes=60)
 scheduler.start()

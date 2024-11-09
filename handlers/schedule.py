@@ -5,15 +5,17 @@ from openpyxl import load_workbook
 import os
 import docx
 
-lw = load_workbook(filename=r'\\192.168.0.5\pool1\user\Миллер К.М\tgbot\raspisanie.xlsx')
-sheet_full = lw.active  # Выбрать активный лист
+if os.path.exists(r'\\192.168.0.5\pool1\user\Миллер К.М\tgbot\raspisanie.xlsx'):
+    lw = load_workbook(filename=r'\\192.168.0.5\pool1\user\Миллер К.М\tgbot\raspisanie.xlsx')
+    sheet_full = lw.active  # Выбрать активный лист
 
 
 @bot.message_handler(state=ScheduleStates.full_list_changes)
 def full_list_changes(message):
     path = r'\\192.168.0.5\pool1\user\Миллер К.М\tgbot'
     files = []
-    word = []
+    word_from_doc = []
+    word_final = []
     markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
     markup.add(types.KeyboardButton('Вернуться в главное меню'))
     for folder in os.listdir(path):
@@ -30,10 +32,11 @@ def full_list_changes(message):
     for tables in doc_file.tables:
         for row in tables.rows:
             for cell in row.cells:
-                word.append(cell.text)
-    for row in range(4, len(word) + 5, 5):
-        word.insert(row, f'{"-" * 30}')
-    bot.send_message(message.chat.id, '\n'.join(word))
+                word_from_doc.append(cell.text)
+    for word_index in range(0, len(word_from_doc), 4):
+        word_final.append('\n'.join(word_from_doc[
+                                    word_index:word_index + 4]) + f'\n{"-" * 30}\n')  # Объединяем первые 4 элемента списка в 1, в конце добавляем подчеркивание
+    bot.send_message(message.chat.id, ''.join(word_final))
 
 
 @bot.message_handler(state=ScheduleStates.week_in_a_row)
@@ -61,7 +64,13 @@ def week_in_a_row(message):
         bot.delete_state(message.from_user.id, message.chat.id)
     elif message.text == 'Следующая неделя' or message.text == 'Текущая неделя':
         if message.text == 'Следующая неделя':
-            week_number = int(week_number) + 1
+            with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
+                week_number = int(week_number) + 1
+                data['week_number'] = week_number
+        else:
+            with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
+                week_number = int(week_number)
+                data['week_number'] = week_number
         if int(week_number) % 2 == 0:
             parity_week = 'знаменатель'
         else:
@@ -94,21 +103,27 @@ def day_of_the_week(message):
 
     if message.text == 'Понедельник':
         append_week(9, 17)
+        day_number(message, 1)
         day_week_next()
     elif message.text == 'Вторник':
         append_week(18, 26)
+        day_number(message, 2)
         day_week_next()
     elif message.text == 'Среда':
         append_week(28, 36)
+        day_number(message, 3)
         day_week_next()
     elif message.text == 'Четверг':
         append_week(37, 45)
+        day_number(message, 4)
         day_week_next()
     elif message.text == 'Пятница':
         append_week(46, 54)
+        day_number(message, 5)
         day_week_next()
     elif message.text == 'Суббота':
         append_week(55, 61)
+        day_number(message, 6)
         day_week_next()
     else:
         bot.send_message(message.chat.id,
@@ -169,7 +184,7 @@ def raspisanie(message):
                         count_chislitel += 1  # Какая по счёту пара
                     else:
                         list_lents.append(
-                            f'{count_chislitel} пара - ❌❌❌\n{"-" * 60}')  # Если None
+                            f'{count_chislitel} пара - ❌❌❌\n{"-" * 30}')  # Если None
                         count_chislitel += 1
             # Если нечетная, то перебираем значения, если первое NoneType, то печатаем первое из четного листа, если и там и там нет значения, то ❌❌❌
             if data['parity_week'] == 'знаменатель':
@@ -186,10 +201,12 @@ def raspisanie(message):
                     else:
                         list_lents.append(f'{count_znamenatel} пара - ❌❌❌\n{"-" * 30}')
                         count_znamenatel += 1
-            perenos = '\n'
             izmenenia(message)
-            bot.send_message(message.chat.id, text=data['user_group'] + ', ' + data['user_day'] + ', ' + data[
-                'parity_week'].title() + '\n' + '-' * 30 + '\n' + perenos.join(list_lents))
+            user_selected_date_raw = f'{dt.now().strftime("%Y")}-{data["week_number"]}-{data["day_number"]}'
+            user_selected_date = dt.strptime(user_selected_date_raw, '%Y-%U-%w')
+            perenos = '\n'  # f-строки не могут включать в себя обратный слеш
+            bot.send_message(message.chat.id,
+                             text=f'\n{data["user_group"]}, {user_selected_date.strftime("%d.%m.%Y")} ({data["user_day"]}), {data["parity_week"].title()}\n{"-" * 30}\n{perenos.join(list_lents)}')
             markup = types.ReplyKeyboardMarkup(resize_keyboard=True)
             markup.add(types.KeyboardButton('Вернуться в главное меню'))
             bot.send_message(message.chat.id, text='Можете вернуться в главное меню:', reply_markup=markup)
@@ -223,10 +240,16 @@ def izmenenia(message):
             for rows in user_group_rows:
                 new_line_char = '\n'
                 bot.send_message(message.chat.id,
-                                 text=f'*Изменения в расписании на этот день недели:\n{new_line_char.join(rows)}*', parse_mode='Markdown')
+                                 text=f'*Изменения в расписании на этот день недели:\n{new_line_char.join(rows)}*',
+                                 parse_mode='Markdown')
         else:
             return bot.send_message(message.chat.id, text='*Изменений в расписании для выбранного дня недели нет*',
                                     parse_mode='Markdown')
     else:
         return bot.send_message(message.chat.id, text='*Изменений в расписании для выбранного дня недели нет*',
                                 parse_mode='Markdown')
+
+
+def day_number(message, num):
+    with bot.retrieve_data(message.from_user.id, message.chat.id) as data:
+        data['day_number'] = num
