@@ -216,8 +216,8 @@ def feedback(message):
 
 def izmenenia_yadisk():
     file_format = '.docx'
-    y = yadisk.YaDisk(token='y0_AgAAAAAGcqjVAAjdqgAAAADWgJzYLG5XsEgDScKHD9NcCWtRDnrP4a4')
-    a = y.public_listdir('https://disk.yandex.ru/d/g28ZNGmvkhGnUQ')
+    y = yadisk.YaDisk(token='*') #Токен папки с изменениями на яндекс диске
+    a = y.public_listdir('*') #Папка с файлами изменения на я.диске
     path_izmenenia = r'\\192.168.0.5\pool1\user\Миллер К.М\tgbot'
     count = 0
     for file in a:
